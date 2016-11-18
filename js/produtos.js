@@ -1,11 +1,11 @@
 $(document).ready(function(){
-    $.getJSON('/model/produtos.json', function(retorno) {
+    $.getJSON('/model/produtos.php', function(retorno) {
     //console.log(retorno);
         $('#lista-produtos tbody').empty(); // empty para limpar a lista antes de exibir
         var total = 0;
         retorno.forEach(function(obj, idx) {
             console.log(obj, idx);
-            total += obj.quantidade;
+            total += parseInt(obj.quantidade);
             //var preco = obj.preco.toString().split('.');
             var tr = "<tr>"
                     + "<td>"+ obj.codigo +"</td>"
@@ -30,7 +30,9 @@ $(document).ready(function(){
             return false;
         }
     });
-    
+    $('#bt-cadastrar').click(function(){
+        $('#form-produto').submit();
+    });
 });
 
 function formataValor(valor){
