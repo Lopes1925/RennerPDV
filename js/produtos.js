@@ -1,24 +1,6 @@
 $(document).ready(function(){
-    $.getJSON('/model/produtos.php', function(retorno) {
-    //console.log(retorno);
-        $('#lista-produtos tbody').empty(); // empty para limpar a lista antes de exibir
-        var total = 0;
-        retorno.forEach(function(obj, idx) {
-            console.log(obj, idx);
-            total += parseInt(obj.quantidade);
-            //var preco = obj.preco.toString().split('.');
-            var tr = "<tr>"
-                    + "<td>"+ obj.codigo +"</td>"
-                    + "<td>"+ obj.nome +"</td>"
-                    + "<td>"+ obj.marca +"</td>"
-                    //+ "<td>R$"+ preco[0] +','+ preco[1] +"</td>"
-                    + "<td>R$"+ formataValor(obj.preco) +"</td>"
-                    + "<td>"+ obj.quantidade +"</td>"
-                    + "</tr>";
-            $('#lista-produtos tbody').append(tr);
-        });
-        $('#quantidade-total').html(total);
-    });
+    
+    carregaRegistros();
     
     $('#codigo').keydown(function(key){
         //console.log(key)
@@ -36,14 +18,20 @@ $(document).ready(function(){
     $('#form-produto').submit(function(evento){
         evento.preventDefault();
         var dados = {
-            
+            codigo: $('#codigo').val(),
+            nome: $('#nome').val(),
+            marca: $('#marca').val(),
+            valor: $('#valor').val(),
+            quantidade: $('#quantidade').val()
         };
         $.post("/model/cadastro.php", dados, function(retorno){
             //console.log(retorno);
             var obj_retorno = JSON.parse(retorno);
             //console.log(obj_retorno);
             if(obj_retorno.status == "ok"){
-                alert("Foi Cadastrado com Sucesso");
+                $('#cadastro-produto').modal('hide');
+                carregaRegistros();
+                $('#alert-produto').removeClass('hide');
             }
         });
     });
@@ -61,4 +49,37 @@ function formataValor(valor){
     
     var retorno = partes[0]+','+partes[1];
     return retorno;
+}
+
+function carregaRegistros(){
+    $.getJSON('/model/produtos.php', function(retorno) {
+    //console.log(retorno);
+        $('#lista-produtos tbody').empty(); // empty para limpar a lista antes de exibir
+        var total = 0;
+        retorno.forEach(function(obj, idx) {
+            console.log(obj, idx);
+            total += parseInt(obj.quantidade);
+            //var preco = obj.preco.toString().split('.');
+            var tr = '<tr obj-id="'+ obj.id +'">'
+                    + "<td>"+ obj.codigo +"</td>"
+                    + "<td>"+ obj.nome +"</td>"
+                    + "<td>"+ obj.marca +"</td>"
+                    //+ "<td>R$"+ preco[0] +','+ preco[1] +"</td>"
+                    + "<td>R$"+ formataValor(obj.preco) +"</td>"
+                    + "<td>"+ obj.quantidade +"</td>"
+                    + '<td><button type="button" class="bt-deletar btn btn-danger">'
+                    +'<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>'
+                    +'</button></td>'
+                    + "</tr>";
+            $('#lista-produtos tbody').append(tr);
+        });
+        $('#quantidade-total').html(total);
+        
+        
+        $('.bt-deletar').click(function() {
+            var tr = $(this).parent().parent();
+            //console.log(tr.attr('obj-id'));
+            var id = tr.attr('obj-id');
+        });
+    });
 }
