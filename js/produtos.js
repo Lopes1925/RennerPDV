@@ -33,6 +33,20 @@ $(document).ready(function(){
     $('#bt-cadastrar').click(function(){
         $('#form-produto').submit();
     });
+    $('#form-produto').submit(function(evento){
+        evento.preventDefault();
+        var dados = {
+            
+        };
+        $.post("/model/cadastro.php", dados, function(retorno){
+            //console.log(retorno);
+            var obj_retorno = JSON.parse(retorno);
+            //console.log(obj_retorno);
+            if(obj_retorno.status == "ok"){
+                alert("Foi Cadastrado com Sucesso");
+            }
+        });
+    });
 });
 
 function formataValor(valor){
