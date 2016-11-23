@@ -13,7 +13,30 @@ $(document).ready(function(){
         }
     });
     $('#bt-cadastrar').click(function(){
-        $('#form-produto').submit();
+        var temErro = false;
+        $('input, select').each(function(idx, elem){
+            //console.log(idx, elem);
+            var valor = $(elem).val();
+            //console.log(valor);
+            $(elem).parents('.form-group').removeClass('has-error');
+            //console.log(pai);
+            if(valor == ""){
+                temErro = true;
+                $(elem).parents('.form-group').addClass('has-error')
+            }
+        });
+        //return false;
+        if(temErro == true){
+            //tem problema
+        }else{
+            $('#form-produto').submit();
+            
+            $('input, select').each(function(idx, elem){
+                $(elem).val("");
+            });
+        }
+        
+        //$('#form-produto').submit();
     });
     $('#form-produto').submit(function(evento){
         evento.preventDefault();
@@ -80,6 +103,17 @@ function carregaRegistros(){
             var tr = $(this).parent().parent();
             //console.log(tr.attr('obj-id'));
             var id = tr.attr('obj-id');
+            console.log(id);
+            var dados = {
+                id: id
+            };
+            $.getJSON('/model/deletar.php', dados, function(retorno){
+                    if (obj_retorno.status == "ok") {
+                        carregaRegistros();
+                        $('#alert-produto').removeClass('hide');
+                        $('#alert-produto').html('O Produto foi removido com sucesso');
+                    }
+            });
         });
     });
 }
